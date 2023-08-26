@@ -3,6 +3,31 @@
 This repository contains documentation in support of GSoC23 project "Adapting IR
 Load Semantics to Freeze All or Freeze Only Uninitialized Data".
 
+## Overview
+
+This project prototypes the use of adding metadata `freeze` (later
+`freeze_bits`) and `uninit_is_nondet` to LLVM IR load instruction to support
+uninitialized memory as `poison`. The first proposed load implementation uses a
+load and freeze operation when decorated with freeze metadata.
+
+```llvm
+; Load with freeze metadata:
+%x = load <ty>, ptr <pointer>, !freeze !{}
+```
+
+The second proposed semantic implementation provides byte-level freezing based
+on initialization state. This provides the semantic capability to closely mimic
+the current load instruction's undef semantics.
+
+```llvm
+; Load with uninit_is_nondet:
+%x = load <ty>, ptr <pointer>, !uninit_is_nondet !{}
+```
+
+Bit code generated using load semantics with `undef` can be automatically
+upgraded using `AutoUpgrade` translation. This is accomplished by adding a new
+load instruction numeric bitcode.
+
 ## LLVM Patches
 
 * [\[llvm\]\[MemoryBuiltins\] Add alloca support to getInitialValueOfAllocation](https://reviews.llvm.org/D155773)
