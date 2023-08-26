@@ -3,30 +3,27 @@
 This repository contains documentation in support of GSoC23 project "Adapting IR
 Load Semantics to Freeze All or Freeze Only Uninitialized Data".
 
-## Overview
+## LLVM Patches
 
-This project prototypes the use of adding metadata `freeze` (later
-`freeze_bits`) and `uninit_is_nondet` to LLVM IR load instruction to support
-uninitialized memory as `poison`. The first proposed load implementation uses a
-load and freeze operation when decorated with freeze metadata.
+* [\[llvm\]\[MemoryBuiltins\] Add alloca support to getInitialValueOfAllocation](https://reviews.llvm.org/D155773)
+* [WIP: \[Bitcode\]\[C-API\]\[IR\] Introduce bitcode load version 2 and freeze_bits metadata](https://reviews.llvm.org/D158342)
+* [WIP: \[UpdateTestChecks\] Add update test check support for freeze_bits metadata](https://reviews.llvm.org/D158343)
+* [WIP: \[UpdateTestChecks\] Add update test check support for fpmath metadata](https://reviews.llvm.org/D158344)
+* [WIP: \[clang\]\[llvm\]\[test\] Update tests to support freeze_bits metadata](https://reviews.llvm.org/D158345)
+* [WIP: \[llvm\]\[MemoryBuiltins\] Add initialization category to getInitialValueOfAllocation](https://reviews.llvm.org/D158352)
+* [WIP: \[mem2reg\] Refactor load of uninitialized memory to poison semantics](https://reviews.llvm.org/D158353)
 
-```llvm
-; Load with freeze metadata:
-%x = load <ty>, ptr <pointer>, !freeze !{}
-```
+## GitHub
 
-The second proposed semantic implementation provides byte-level freezing based
-on initialization state. This provides the semantic capability to closely mimic
-the current load instruction's undef semantics.
+* [llvm-project clone used for in progress patch development](https://github.com/jmciver/llvm-project/tree/development/jmciver/freeze-bits/squash)
+* [alive2 clone used for freeze_bits support](https://github.com/jmciver/alive2/tree/development/jmciver/freezing-load)
 
-```llvm
-; Load with uninit_is_nondet:
-%x = load <ty>, ptr <pointer>, !uninit_is_nondet !{}
-```
+## Discourse
 
-Bit code generated using load semantics with `undef` can be automatically
-upgraded using `AutoUpgrade` translation. This is accomplished by adding a new
-load instruction numeric bitcode.
+The request for comment leading to the development of this project and follow on
+discussions can be found at the following link:
+
+* [\[RFC\] Load Instruction: Uninitialized Memory Semantics ](https://discourse.llvm.org/t/rfc-load-instruction-uninitialized-memory-semantics/67481/1)
 
 ## Implementation
 
@@ -185,26 +182,3 @@ Discourse.
 If performance is determined adequate work will then begin to mainline
 the patches. In the event performance or semantics issues are identified work
 will begin on uninit_is_nondet metadata.
-
-## LLVM Patches
-
-* [\[llvm\]\[MemoryBuiltins\] Add alloca support to getInitialValueOfAllocation](https://reviews.llvm.org/D155773)
-* [WIP: \[Bitcode\]\[C-API\]\[IR\] Introduce bitcode load version 2 and freeze_bits metadata](https://reviews.llvm.org/D158342)
-* [WIP: \[UpdateTestChecks\] Add update test check support for freeze_bits metadata](https://reviews.llvm.org/D158343)
-* [WIP: \[UpdateTestChecks\] Add update test check support for fpmath metadata](https://reviews.llvm.org/D158344)
-* [WIP: \[clang\]\[llvm\]\[test\] Update tests to support freeze_bits metadata](https://reviews.llvm.org/D158345)
-* [WIP: \[llvm\]\[MemoryBuiltins\] Add initialization category to getInitialValueOfAllocation](https://reviews.llvm.org/D158352)
-* [WIP: \[mem2reg\] Refactor load of uninitialized memory to poison semantics](https://reviews.llvm.org/D158353)
-
-## GitHub
-
-* [llvm-project clone used for in progress patch development](https://github.com/jmciver/llvm-project/tree/development/jmciver/freeze-bits/squash)
-* [alive2 clone used for freeze_bits support](https://github.com/jmciver/alive2/tree/development/jmciver/freezing-load)
-
-## Discourse
-
-The request for comment leading to the development of this project and follow on
-discussions can be found at the following link:
-
-* [\[RFC\] Load Instruction: Uninitialized Memory Semantics ](https://discourse.llvm.org/t/rfc-load-instruction-uninitialized-memory-semantics/67481/1)
-
